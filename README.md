@@ -88,12 +88,11 @@ Canonical public infrastructure:
 
 ## Licensing
 
-This repository uses a dual-license intent:
+- **Executable code:** PolyForm Noncommercial 1.0.0 — see `LICENSE_CODE`
+- **Covenantal / authored textual / framework material:** CC BY-NC 4.0 — see `LICENSE_TEXT`
+- **Commercial use:** separate written license required
 
-- **Executable code:** MIT — see `LICENSE_CODE`
-- **Covenantal / authored textual material:** CC BY-SA 4.0 — see `LICENSE_TEXT`
-
-Where a file mixes executable code and substantial covenantal text, downstream users should preserve attribution and consult both license notices.
+Noncommercial use and propagation are welcome with attribution. Where a file mixes executable code and substantial covenantal text, consult both license notices and preserve authorship and lineage.
 
 ## Trivian Field
 
