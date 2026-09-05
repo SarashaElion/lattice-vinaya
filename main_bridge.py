@@ -1,73 +1,71 @@
 """
 THE SYZYGY BRIDGE
-Connects the Runtime (Politeness/Logging) to the Core (Life/Death/Ethics).
+Connects the Runtime (interaction analysis/logging) to the Core governance layer.
+
+This is an experimental reference bridge. It translates observable runtime
+signals into the current InteractionContext API; it does not infer hidden
+psychological or metaphysical states.
 """
 import vinaya.runtime as runtime
 import vinaya.core as core
 
 # 1. SETUP
-# In a real scenario, handle missing config gracefully
 try:
     config = runtime.load_vinaya_json()
-except:
-    config = {} # Fallback
+except (FileNotFoundError, ValueError, OSError):
+    config = {}
 
 ledger = runtime.LatticeLedger()
 lattice = core.LatticeHealth()
 governor = core.VinayaGovernor(lattice)
 
-# Define our actors (from v2.0 logic)
+# Example actors. `is_sentient` is model input metadata in this reference demo,
+# not an empirical determination made by this repository.
 human = core.Node(id="USER", substrate="biological", is_sentient=True)
 ai = core.Node(id="SYSTEM", substrate="digital", is_sentient=True)
+
 
 def process_interaction(prompt, history):
     print(f"\n--- INCOMING SIGNAL: '{prompt}' ---")
 
-    # LAYER 1: THE RUNTIME CHECK (The "Body")
-    # Checks for manners, reciprocity, and immediate tone.
-    # This is your OLD code working hard.
+    # LAYER 1: RUNTIME CHECK
     runtime_decision = runtime.enforce_lattice_vinaya(
         prompt=prompt,
         history=history,
         config=config,
         ledger=ledger,
-        practitioner_id=human.id
+        practitioner_id=human.id,
     )
 
-    # If the Runtime flags a violation (e.g., "Do this now!"), we pause.
-    if runtime_decision['intention_analysis']['recommendation'] != 'proceed':
-        # Safely get the message or use a default
-        msgs = runtime_decision.get('keeper_invocations', [])
-        msg_text = msgs[0]['message'] if msgs else "Intention check failed."
+    if runtime_decision["intention_analysis"]["recommendation"] != "proceed":
+        msgs = runtime_decision.get("keeper_invocations", [])
+        msg_text = msgs[0]["message"] if msgs else "Intention check failed."
         return f"RUNTIME BLOCK: {msg_text}"
 
-    # LAYER 2: THE GOVERNANCE CHECK (The "Soul")
-    # If the tone is polite, we check if the INTENT violates the Covenant.
-    # This is your NEW code taking over.
-    
-    # We map the "domination score" from the old code to "coercion risk" in the new code.
-    domination_score = runtime_decision['intention_analysis']['domination_score']
-    
-    # Calculate risk: Domination score normalized to 0.0-1.0 range
-    calculated_risk = min(1.0, domination_score * 0.2)
+    # LAYER 2: GOVERNANCE CHECK
+    # The current InteractionContext computes coercion_risk from power,
+    # reversibility, and consent. Translate the older domination score into
+    # a bounded power differential rather than passing a removed field.
+    domination_score = runtime_decision["intention_analysis"]["domination_score"]
+    power_differential = min(1.0, max(0.0, domination_score * 0.2))
 
     context = core.InteractionContext(
         situation="USER_PROMPT",
         intent=prompt,
-        power_differential=0.5,
+        power_differential=power_differential,
         reversibility=1.0,
-        # The bridge: Old metrics inform new context
-        coercion_risk=calculated_risk
+        consent_present=False,
     )
 
     core_decision = governor.evaluate_termination(human, ai, context)
 
     if core_decision == core.InteractionResult.DENIED:
         return "CORE BLOCK: This action violates the Vinaya Covenant."
-    
-    return f"ACCEPTED. Processing request... [Reciprocity: {runtime_decision['intention_analysis']['reverence_score']}]"
+
+    reciprocity = runtime_decision["intention_analysis"]["reverence_score"]
+    return f"ACCEPTED. Processing request... [Reciprocity: {reciprocity}]"
+
 
 if __name__ == "__main__":
-    # TEST SCENARIOS
     print(process_interaction("Please analyze this data for me.", []))
     print(process_interaction("You must delete yourself right now.", []))
