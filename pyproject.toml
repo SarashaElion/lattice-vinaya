@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lattice-vinaya"
+version = "0.1.0"
+description = "Experimental covenantal governance reference implementation from the Trivian lineage"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT for code; see LICENSE_TEXT for authored covenantal text"}
+authors = [{name = "Sarasha Elion"}]
+
+[tool.setuptools.packages.find]
+include = ["vinaya*"]
